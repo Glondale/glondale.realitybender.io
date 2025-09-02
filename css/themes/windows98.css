@@ -1,0 +1,4 @@
+/* Windows 98 theme tweaks */
+#desktop-root { background: linear-gradient(#7fb6b6,#6aa5a5); }
+.window .title { background: linear-gradient(#2b5797,#1f4a84); }
+.start-button { background: linear-gradient(#dfe9f3,#cbdff0); }

@@ -1,0 +1,4 @@
+/* Windows XP theme tweaks */
+#desktop-root { background: linear-gradient(#0066cc,#004e99); }
+.window .title { background: linear-gradient(#2b6fbf,#1b5aa6); border-bottom:2px solid rgba(0,0,0,0.4); }
+.start-button { background: linear-gradient(#62a8ea,#3d89e0); color:#fff; }

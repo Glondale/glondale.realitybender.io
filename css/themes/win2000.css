@@ -1,0 +1,4 @@
+/* Windows 2000 theme tweaks */
+#desktop-root { background: linear-gradient(#005f5f,#004e4e); }
+.window .title { background: linear-gradient(#0b3b6f,#062b53); }
+.start-button { background: linear-gradient(#d4e5f7,#bcd6f0); }
