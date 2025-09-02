@@ -1,5 +1,6 @@
 /* Windows 8 theme */
-#desktop-root .desktop-area.theme-win8, .desktop-area.theme-win8, #desktop-root .desktop-area.theme-win8 {
+/* apply when either the root carries the theme class or the desktop-area does */
+#desktop-root.theme-win8 .desktop-area, .desktop-area.theme-win8 {
   background-image: url("../../Assets/Wallpapers/Win8.webp");
   background-position: center;
   background-repeat: no-repeat;

@@ -1,5 +1,6 @@
 /* Windows 7 theme */
-#desktop-root .desktop-area.theme-win7, .desktop-area.theme-win7, #desktop-root .desktop-area.theme-win7 {
+/* apply when either the root carries the theme class or the desktop-area does */
+#desktop-root.theme-win7 .desktop-area, .desktop-area.theme-win7 {
   background-image: url("../../Assets/Wallpapers/Win7.webp");
   background-position: center;
   background-repeat: no-repeat;

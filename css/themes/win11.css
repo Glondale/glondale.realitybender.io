@@ -1,5 +1,6 @@
 /* Windows 11 theme */
-#desktop-root .desktop-area.theme-win11, .desktop-area.theme-win11, #desktop-root .desktop-area.theme-win11 {
+/* apply when either the root carries the theme class or the desktop-area does */
+#desktop-root.theme-win11 .desktop-area, .desktop-area.theme-win11 {
   background-image: url("../../Assets/Wallpapers/Win11.webp");
   background-position: center;
   background-repeat: no-repeat;
