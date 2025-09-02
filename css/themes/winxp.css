@@ -1,7 +1,12 @@
 /* Windows XP theme overrides */
 #desktop-root.theme-winxp {
+	/* use shipped wallpaper with gradient fallback */
 	background-color: #6fb0ff;
-	background-image: linear-gradient(180deg, #6fb0ff 0%, #2b67d6 100%);
+	background-image: url("../../Assets/Wallpapers/Wxp.jpg");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-blend-mode: multiply;
 }
 
 #desktop-root.theme-winxp .window .title {
