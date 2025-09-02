@@ -1,0 +1,15 @@
+/* Windows 7 theme */
+#desktop-root .desktop-area.theme-win7, .desktop-area.theme-win7, #desktop-root .desktop-area.theme-win7 {
+  background-image: url("../../Assets/Wallpapers/Win7.webp");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: #1f4f88;
+}
+
+#desktop-root.theme-win7 .window .title {
+  background: linear-gradient(#2b5aa0,#133e6e);
+  color:#fff;
+}
+
+#desktop-root.theme-win7 .start-button { background: linear-gradient(#f0f0f0,#d0d0d0); color:#000; }

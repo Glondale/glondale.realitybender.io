@@ -2,7 +2,7 @@
   // Small developer Test Menu for fast theme switching
   const TestMenu = {
     menuEl: null,
-    themes: ['windows95','windows98','win2000','winxp'],
+  themes: ['windows95','windows98','win2000','winxp','win7','win8','win10','win11'],
     toggle(env){
       if(this.menuEl){ this.menuEl.remove(); this.menuEl = null; return; }
       const el = document.createElement('div');

@@ -1,0 +1,11 @@
+/* Windows 10 theme */
+#desktop-root .desktop-area.theme-win10, .desktop-area.theme-win10, #desktop-root .desktop-area.theme-win10 {
+  background-image: url("../../Assets/Wallpapers/Win10.webp");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: #0078d7;
+}
+
+#desktop-root.theme-win10 .window .title { background: linear-gradient(#006bb3,#005a9e); color:#fff; }
+#desktop-root.theme-win10 .start-button { background: linear-gradient(#f8f8f8,#dcdcdc); color:#000; }

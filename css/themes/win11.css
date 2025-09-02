@@ -1,0 +1,11 @@
+/* Windows 11 theme */
+#desktop-root .desktop-area.theme-win11, .desktop-area.theme-win11, #desktop-root .desktop-area.theme-win11 {
+  background-image: url("../../Assets/Wallpapers/Win11.webp");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: #0a58a3;
+}
+
+#desktop-root.theme-win11 .window .title { background: linear-gradient(#0f62b8,#094b86); color:#fff; }
+#desktop-root.theme-win11 .start-button { background: linear-gradient(#ffffff,#e6e6e6); color:#000; }
