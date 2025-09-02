@@ -24,6 +24,15 @@
   <script src="js/core/content-loader.js"></script>
   <script src="js/core/plugin-manager.js"></script>
 
+  <!-- UI and apps (must load before engine start so plugins register) -->
+  <script src="js/ui/desktop-shell.js"></script>
+  <script src="js/ui/start-menu.js"></script>
+
+  <script src="js/apps/base-app.js"></script>
+  <script src="js/apps/explorer.js"></script>
+  <script src="js/apps/notepad.js"></script>
+  <script src="js/apps/email.js"></script>
+
   <script>
     // Start the engine
     if (window.GameEngine) {
