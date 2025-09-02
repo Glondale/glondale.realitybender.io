@@ -1,13 +1,12 @@
 /* Windows 2000 theme overrides */
-#desktop-root.theme-win2000 {
+.desktop-area.theme-win2000, #desktop-root.theme-win2000 .desktop-area, #desktop-root .desktop-area.theme-win2000, .desktop-area.theme-win2000 {
 	/* use shipped wallpaper with gradient fallback */
+	background-image: url("../../Assets/Wallpapers/w2000.png");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	/* solid fallback color only */
 	background-color: #0b3b6f;
-		background-image: url("../../Assets/Wallpapers/w2000.png");
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: cover;
-		/* keep a solid color fallback but don't blend with the image to avoid tinting */
-		background-color: #0b3b6f;
 }
 
 #desktop-root.theme-win2000 .window .title {

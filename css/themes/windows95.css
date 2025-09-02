@@ -1,6 +1,6 @@
 /* Windows 95 theme overrides */
 /* Retro teal background and classic palette */
-#desktop-root {
+#desktop-root .desktop-area, .desktop-area.theme-windows95, #desktop-root .desktop-area.theme-windows95 {
 	/* pale teal tiled / gradient background to evoke Win95 era */
 	background-color: #cfeeea;
 	background-image: linear-gradient(180deg, #cfeeea 0%, #b9e6e2 100%);

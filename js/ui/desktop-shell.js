@@ -3,7 +3,10 @@
   const root = document.getElementById('desktop-root');
   const UIManager = {
     renderDesktop(env){
-      root.innerHTML = '';
+  root.innerHTML = '';
+  // create a dedicated desktop area that sits above the taskbar
+  const area = document.createElement('div');
+  area.className = 'desktop-area';
       this.env = env || {};
       // apply theme class to desktop-root based on env.ui.theme or env.version
       const theme = (env && env.ui && env.ui.theme) ? env.ui.theme : (env && env.version ? env.version : 'windows95');
@@ -22,7 +25,8 @@
         const inst = PluginManager.create('explorer');
         if(inst && inst.open) inst.open();
       };
-      root.appendChild(icon);
+  area.appendChild(icon);
+  root.appendChild(area);
       // taskbar
       const tb = document.createElement('div'); tb.className='taskbar';
   const start = document.createElement('div'); start.className='start-button';
@@ -35,7 +39,7 @@
   tb.appendChild(devBtn);
   const status = document.createElement('div'); status.className='status'; status.textContent = env && env.version? env.version : 'unknown';
   tb.appendChild(status);
-      root.appendChild(tb);
+  root.appendChild(tb);
       // expose for OSManager
       global.UIManager = UIManager;
     },

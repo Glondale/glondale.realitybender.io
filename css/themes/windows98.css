@@ -1,9 +1,8 @@
 /* Windows 98 theme overrides */
-#desktop-root.theme-windows98 {
+#desktop-root .desktop-area.theme-windows98, .desktop-area.theme-windows98, #desktop-root .desktop-area.theme-windows98 {
 	/* Windows 98 used a brighter, more saturated teal/blue tone */
 	background-color: #2b7fa9;
 	background-image: linear-gradient(180deg, #9fd1f0 0%, #cfeeff 100%);
-	background-blend-mode: multiply;
 }
 
 #desktop-root.theme-windows98 .window .title {

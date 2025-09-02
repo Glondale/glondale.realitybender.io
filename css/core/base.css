@@ -1,7 +1,10 @@
 /* Basic reset and Win95-style core layout */
 * { box-sizing: border-box; }
 html,body{ height:100%; margin:0; background:#008080; }
-#desktop-root{ width:100%; height:100%; position:relative; overflow:hidden; padding:20px; font-family: 'MS Sans Serif', Arial, sans-serif; }
+#desktop-root{ width:100%; height:100%; position:relative; overflow:hidden; font-family: 'MS Sans Serif', Arial, sans-serif; }
+
+/* area above the taskbar where the wallpaper and icons render */
+.desktop-area { position:absolute; left:0; right:0; top:0; /* leave space for taskbar */ bottom:36px; padding:20px; overflow:hidden; }
 
 /* Window with classic 3D bevel */
 .window { position:absolute; background:#c0c0c0; box-sizing:border-box; }
