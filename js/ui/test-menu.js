@@ -29,9 +29,18 @@
               OSManager.env.ui = OSManager.env.ui || {};
               OSManager.env.ui.theme = t;
             }
-            // update theme link for immediate stylesheet swap
-            const link = document.getElementById('theme-stylesheet');
-            if(link) link.href = `css/themes/${t}.css`;
+      // update theme link for immediate stylesheet swap
+      const link = document.getElementById('theme-stylesheet');
+      if(link) {
+        link.href = `css/themes/${t}.css?cb=${Date.now()}`;
+        // also set a class on the desktop root so CSS selectors matching theme classes take effect
+        var root = document.getElementById('desktop-root');
+        if (root) {
+          // remove any existing theme- classes
+          Array.from(root.classList).filter(function(c){return c.indexOf('theme-')===0}).forEach(function(c){root.classList.remove(c)});
+          root.classList.add('theme-' + t);
+        }
+      }
             // re-render desktop to allow JS-driven changes
             if(window.UIManager) UIManager.renderDesktop(window.OSManager?OSManager.env:{version:t, ui:{theme:t}});
           }catch(e){ console.error('Theme switch failed',e); }

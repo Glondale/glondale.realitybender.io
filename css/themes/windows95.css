@@ -1,6 +1,24 @@
 /* Windows 95 theme overrides */
 /* Retro teal background and classic palette */
-body { background-color: #008080; }
+#desktop-root {
+	/* pale teal tiled / gradient background to evoke Win95 era */
+	background-color: #cfeeea;
+	background-image: linear-gradient(180deg, #cfeeea 0%, #b9e6e2 100%);
+	background-size: cover;
+}
+
+.taskbar .start-button::before {
+	/* small inline SVG used as a start "logo" so no external assets are needed */
+	content: '';
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	margin-right: 6px;
+	vertical-align: middle;
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><rect width='32' height='32' fill='%23009988'/><text x='16' y='22' font-size='12' text-anchor='middle' fill='%23ffffff' font-family='Arial'>95</text></svg>");
+	background-size: contain;
+	background-repeat: no-repeat;
+}
 #desktop-root { padding: 20px; }
 .window { font-family: 'MS Sans Serif', Arial, sans-serif; }
 .window .title { background:linear-gradient(#000080,#000060); color:#fff; }
