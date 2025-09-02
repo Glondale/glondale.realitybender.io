@@ -2,11 +2,12 @@
 #desktop-root.theme-winxp {
 	/* use shipped wallpaper with gradient fallback */
 	background-color: #6fb0ff;
-	background-image: url("../../Assets/Wallpapers/Wxp.jpg");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-blend-mode: multiply;
+		background-image: url("../../Assets/Wallpapers/Wxp.jpg");
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		/* solid fallback color only, avoid blending which tints the wallpaper */
+		background-color: #6fb0ff;
 }
 
 #desktop-root.theme-winxp .window .title {
