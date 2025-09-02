@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reality-Bending OS - Prototype</title>
+  <link rel="stylesheet" href="css/core/base.css">
+  <link rel="stylesheet" href="css/themes/windows95.css">
+</head>
+<body>
+  <div id="desktop-root"></div>
+
+  <script>
+    // Basic boot log
+    console.log('RBOS: booting (index.html)');
+  </script>
+
+  <script src="js/core/event-system.js"></script>
+  <script src="js/core/game-engine.js"></script>
+  <script src="js/core/os-manager.js"></script>
+  <script src="js/core/file-system.js"></script>
+  <script src="js/core/window-manager.js"></script>
+  <script src="js/core/save-manager.js"></script>
+  <script src="js/core/content-loader.js"></script>
+  <script src="js/core/plugin-manager.js"></script>
+
+  <script>
+    // Start the engine
+    if (window.GameEngine) {
+      window.GameEngine.start();
+    } else {
+      console.warn('RBOS: GameEngine not available');
+    }
+  </script>
+</body>
+</html>

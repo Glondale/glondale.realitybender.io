@@ -1,0 +1,1 @@
+This is a sample note file.\n\nYou can edit and save this note using Notepad in the prototype.\n
