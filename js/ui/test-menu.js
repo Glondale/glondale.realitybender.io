@@ -29,7 +29,9 @@
               OSManager.env.ui.theme = t;
               if(window.UIManager) UIManager.renderDesktop(OSManager.env);
             } else {
-              if(window.UIManager) UIManager.renderDesktop({version:t, ui:{theme:t}, apps: (env && env.apps) || []});
+              // fallback: if OSManager.env not available, try to keep apps list empty
+              const apps = (window.OSManager && OSManager.env && OSManager.env.apps) ? OSManager.env.apps : [];
+              if(window.UIManager) UIManager.renderDesktop({version:t, ui:{theme:t}, apps: apps});
             }
           }catch(e){ console.error('Theme switch failed',e); }
           this.toggle();
