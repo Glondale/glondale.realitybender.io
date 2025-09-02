@@ -1,8 +1,8 @@
 /* Windows 95 theme overrides */
-/* Use a solid retro teal background. The wallpaper file was removed to avoid 404s. */
+/* Retro teal background and classic palette */
 body { background-color: #008080; }
-#desktop-root { padding: 24px; }
-.window { font-family: 'MS Sans Serif', Arial, sans-serif; border-color:#000; }
-.window .title { background:#000080; color:#fff; font-size:12px; }
+#desktop-root { padding: 20px; }
+.window { font-family: 'MS Sans Serif', Arial, sans-serif; }
+.window .title { background:linear-gradient(#000080,#000060); color:#fff; }
 .taskbar { background:#c0c0c0; }
-.start-button { background:#000080; }
+.start-button { background:linear-gradient(#e0e0e0,#b8b8b8); }
