@@ -1,5 +1,6 @@
 /* Windows 95 theme overrides */
-body { background: #008080 url('../assets/images/backgrounds/win95-wallpaper.png') center center no-repeat; background-size: cover; }
+/* Use a solid retro teal background. The wallpaper file was removed to avoid 404s. */
+body { background-color: #008080; }
 #desktop-root { padding: 24px; }
 .window { font-family: 'MS Sans Serif', Arial, sans-serif; border-color:#000; }
 .window .title { background:#000080; color:#fff; font-size:12px; }
