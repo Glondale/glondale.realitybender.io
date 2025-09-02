@@ -24,15 +24,16 @@
         btn.style.borderTop = '1px solid rgba(0,0,0,0.1)';
         btn.onclick = ()=>{
           try{
+            // update OSManager env if present
             if(window.OSManager && OSManager.env){
               OSManager.env.ui = OSManager.env.ui || {};
               OSManager.env.ui.theme = t;
-              if(window.UIManager) UIManager.renderDesktop(OSManager.env);
-            } else {
-              // fallback: if OSManager.env not available, try to keep apps list empty
-              const apps = (window.OSManager && OSManager.env && OSManager.env.apps) ? OSManager.env.apps : [];
-              if(window.UIManager) UIManager.renderDesktop({version:t, ui:{theme:t}, apps: apps});
             }
+            // update theme link for immediate stylesheet swap
+            const link = document.getElementById('theme-stylesheet');
+            if(link) link.href = `css/themes/${t}.css`;
+            // re-render desktop to allow JS-driven changes
+            if(window.UIManager) UIManager.renderDesktop(window.OSManager?OSManager.env:{version:t, ui:{theme:t}});
           }catch(e){ console.error('Theme switch failed',e); }
           this.toggle();
         };
