@@ -8,5 +8,45 @@
   background-color: #0a58a3;
 }
 
-#desktop-root.theme-win11 .window .title { background: linear-gradient(#0f62b8,#094b86); color:#fff; }
-#desktop-root.theme-win11 .start-button { background: linear-gradient(#ffffff,#e6e6e6); color:#000; }
+#desktop-root.theme-win11 .window .title { 
+  background: #0078D4;
+  color: #ffffff;
+  border-radius: 8px 8px 0 0;
+  border: 1px solid #005A9E;
+  backdrop-filter: blur(20px);
+  background: rgba(0, 120, 212, 0.9);
+}
+#desktop-root.theme-win11 .start-button { 
+  background: rgba(255,255,255,0.8);
+  color: #000000;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+#desktop-root.theme-win11 .start-button:hover {
+  background: rgba(255,255,255,0.9);
+  transform: scale(1.05);
+}
+
+#desktop-root.theme-win11 .start-button::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><rect fill='%23000000' x='1' y='1' width='7' height='7' rx='2'/><rect fill='%23000000' x='12' y='1' width='7' height='7' rx='2'/><rect fill='%23000000' x='1' y='12' width='7' height='7' rx='2'/><rect fill='%23000000' x='12' y='12' width='7' height='7' rx='2'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#desktop-root.theme-win11 .start-button::after {
+  content: none;
+}

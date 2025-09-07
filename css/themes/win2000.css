@@ -10,13 +10,16 @@
 }
 
 #desktop-root.theme-win2000 .window .title {
-	background: linear-gradient(#174f7f,#0b3b6f);
-	color:#fff;
+	background: linear-gradient(to right, #0A5A9E, #003366);
+	color: #ffffff;
+	border: 1px solid #003366;
 }
 
 #desktop-root.theme-win2000 .start-button {
-	background: linear-gradient(#cde6ff,#99c6ff);
-	color:#000;
+	background: linear-gradient(to bottom, #E6F2FF, #CCE5FF);
+	color: #000000;
+	border: 1px solid #9BC2E6;
+	box-shadow: inset 1px 1px 0 #ffffff;
 }
 
 #desktop-root.theme-win2000 .taskbar .start-button::before {
