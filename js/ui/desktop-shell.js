@@ -13,6 +13,10 @@
       // remove previous theme classes
       root.className = '';
       root.classList.add('theme-' + theme);
+      
+      // Debug logging
+      console.log('UIManager: Applied theme class:', 'theme-' + theme, 'to root element');
+      console.log('UIManager: Root element classes:', root.className);
       // background is via CSS theme
       // create a sample desktop icon using the W95 icon asset
   const icon = document.createElement('div');

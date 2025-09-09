@@ -33,3 +33,10 @@
 	background-size: contain;
 	background-repeat: no-repeat;
 }
+
+#desktop-root.theme-win2000 .taskbar {
+  background: #E6F2FF !important;
+  border-top: 2px solid #CCE5FF !important;
+  height: 36px !important;
+  box-shadow: inset 0 1px 0 #ffffff !important;
+}

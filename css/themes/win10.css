@@ -1,11 +1,11 @@
 /* Windows 10 theme */
 /* apply when either the root carries the theme class or the desktop-area does */
 #desktop-root.theme-win10 .desktop-area, .desktop-area.theme-win10 {
-  background-image: url("../../Assets/Wallpapers/Win10.webp");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-color: #0078d7;
+  background-image: url("../../Assets/Wallpapers/Win10.webp") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-color: #0078d7 !important;
 }
 
 #desktop-root.theme-win10 .window .title { 
@@ -46,4 +46,12 @@
 
 #desktop-root.theme-win10 .start-button::after {
   content: none;
+}
+
+#desktop-root.theme-win10 .taskbar {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  height: 48px !important;
+  box-shadow: none !important;
 }

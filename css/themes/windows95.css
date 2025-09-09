@@ -1,9 +1,12 @@
 /* Windows 95 theme overrides */
 /* Retro teal background and classic palette */
 #desktop-root .desktop-area, .desktop-area.theme-windows95, #desktop-root .desktop-area.theme-windows95 {
-	/* Exact Windows 95 teal desktop background */
+	/* Windows 95 with wallpaper fallback */
+	background-image: url("../../Assets/Wallpapers/W95-98.webp");
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
 	background-color: #008080;
-	background-image: none;
 }
 
 .taskbar .start-button::before {

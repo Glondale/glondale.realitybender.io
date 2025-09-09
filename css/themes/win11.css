@@ -1,11 +1,11 @@
 /* Windows 11 theme */
 /* apply when either the root carries the theme class or the desktop-area does */
 #desktop-root.theme-win11 .desktop-area, .desktop-area.theme-win11 {
-  background-image: url("../../Assets/Wallpapers/Win11.webp");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-color: #0a58a3;
+  background-image: url("../../Assets/Wallpapers/Win11.webp") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  background-color: #0a58a3 !important;
 }
 
 #desktop-root.theme-win11 .window .title { 
@@ -69,4 +69,13 @@
 
 #desktop-root.theme-win11 .start-button::after {
   content: none;
+}
+
+#desktop-root.theme-win11 .taskbar {
+  background: rgba(32, 32, 32, 0.85) !important;
+  backdrop-filter: blur(30px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  height: 48px !important;
+  border-radius: 12px 12px 0 0 !important;
+  box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.3) !important;
 }

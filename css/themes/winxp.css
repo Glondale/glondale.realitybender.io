@@ -48,10 +48,10 @@
 }
 #desktop-root.theme-winxp .desktop-area, .desktop-area.theme-winxp, #desktop-root .desktop-area.theme-winxp {
 	/* use shipped wallpaper with gradient fallback */
-	background-image: url("../../Assets/Wallpapers/Wxp.jpg");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
+	background-image: url("../../Assets/Wallpapers/Wxp.jpg") !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+	background-size: cover !important;
 	/* solid fallback color only */
-	background-color: #6fb0ff;
+	background-color: #6fb0ff !important;
 }

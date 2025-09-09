@@ -57,22 +57,40 @@
           try{
             console.log('TestMenu: Switching to OS version:', osInfo.version);
             
-            // Use OSManager upgrade system for proper OS switching
-            if(window.OSManager && window.OSManager.upgrade) {
-              await OSManager.upgrade(osInfo.version);
-            } else {
-              // Fallback to theme switching only
+            // Always use UIManager for proper theme switching to ensure consistency
+            if(window.UIManager && window.UIManager.renderDesktop) {
+              // Create proper environment object with theme mapping
+              const themeMapping = {
+                'windows95': 'windows95',
+                'windows98': 'windows98', 
+                'win2000': 'win2000',
+                'winxp': 'winxp',
+                'win7': 'win7',
+                'win8': 'win8', 
+                'win10': 'win10',
+                'win11': 'win11'
+              };
+              const themeToUse = themeMapping[t] || t;
+              
+              // Update theme stylesheet
               const link = document.getElementById('theme-stylesheet');
               if(link) {
                 link.href = `css/themes/${t}.css?cb=${Date.now()}`;
-                const root = document.getElementById('desktop-root');
-                if (root) {
-                  Array.from(root.classList).filter(c => c.indexOf('theme-')===0).forEach(c => root.classList.remove(c));
-                  root.classList.add('theme-' + t);
-                }
               }
-              if(window.UIManager) {
-                UIManager.renderDesktop({version: osInfo.version, ui: {theme: t}});
+              
+              // Render desktop with proper theme
+              window.UIManager.renderDesktop({
+                version: osInfo.version, 
+                ui: { theme: themeToUse }
+              });
+              
+              console.log(`Applied theme: ${themeToUse} for OS: ${osInfo.version}`);
+            } else {
+              console.warn('UIManager not available, using fallback');
+              // Fallback approach
+              const link = document.getElementById('theme-stylesheet');
+              if(link) {
+                link.href = `css/themes/${t}.css?cb=${Date.now()}`;
               }
             }
             
