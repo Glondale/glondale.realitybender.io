@@ -8,5 +8,42 @@
   background-color: #0078d7;
 }
 
-#desktop-root.theme-win10 .window .title { background: linear-gradient(#006bb3,#005a9e); color:#fff; }
-#desktop-root.theme-win10 .start-button { background: linear-gradient(#f8f8f8,#dcdcdc); color:#000; }
+#desktop-root.theme-win10 .window .title { 
+  background: #0078D4; 
+  color: #ffffff;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+}
+#desktop-root.theme-win10 .start-button { 
+  background: rgba(0,0,0,0.2);
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 0;
+  box-shadow: none;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+#desktop-root.theme-win10 .start-button:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+#desktop-root.theme-win10 .start-button::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><rect fill='%23ffffff' x='1' y='1' width='7' height='7'/><rect fill='%23ffffff' x='12' y='1' width='7' height='7'/><rect fill='%23ffffff' x='1' y='12' width='7' height='7'/><rect fill='%23ffffff' x='12' y='12' width='7' height='7'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#desktop-root.theme-win10 .start-button::after {
+  content: none;
+}

@@ -8,5 +8,43 @@
   background-color: #1a6fb3;
 }
 
-#desktop-root.theme-win8 .window .title { background: linear-gradient(#1f5ea0,#0f4a7a); color:#fff; }
-#desktop-root.theme-win8 .start-button { background: linear-gradient(#ffffff,#dcdcdc); color:#000; }
+#desktop-root.theme-win8 .window .title { 
+  background: #2B5797;
+  color: #ffffff;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+#desktop-root.theme-win8 .start-button { 
+  background: #2B5797;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  font-weight: 300;
+  box-shadow: none;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+#desktop-root.theme-win8 .start-button:hover {
+  background: #1F4A84;
+}
+
+#desktop-root.theme-win8 .start-button::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'><rect fill='%23ffffff' x='1' y='1' width='7' height='7'/><rect fill='%23ffffff' x='12' y='1' width='7' height='7'/><rect fill='%23ffffff' x='1' y='12' width='7' height='7'/><rect fill='%23ffffff' x='12' y='12' width='7' height='7'/></svg>");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#desktop-root.theme-win8 .start-button::after {
+  content: none;
+}
