@@ -6,6 +6,13 @@
   <title>Reality-Bending OS - Prototype</title>
   <link rel="stylesheet" href="css/core/base.css">
   <link id="theme-stylesheet" rel="stylesheet" href="css/themes/windows95.css">
+  <script>
+    // Dynamic theme loading based on OS version
+    window.loadTheme = function(themeName) {
+      const themeLink = document.getElementById('theme-stylesheet');
+      themeLink.href = `css/themes/${themeName}.css`;
+    };
+  </script>
 </head>
 <body>
   <div id="desktop-root"></div>

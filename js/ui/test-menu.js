@@ -16,32 +16,50 @@
       el.style.zIndex = 9999;
       el.innerHTML = '<strong>Test Menu</strong><hr/>';
       const list = document.createElement('div');
-      // Map theme names to actual OS versions
+      // Map theme names to actual OS versions with display info
       const osMap = {
-        'windows95': 'windows95',
-        'windows98': 'windows98', 
-        'win2000': 'win2000',
-        'winxp': 'winxp',
-        'win7': 'windows7',
-        'win8': 'windows8', 
-        'win10': 'windows10',
-        'win11': 'windows11'
+        'windows95': { version: 'windows95', displayName: 'Windows 95', year: '1995', color: '#008080' },
+        'windows98': { version: 'windows98', displayName: 'Windows 98', year: '1998', color: '#008080' }, 
+        'win2000': { version: 'win2000', displayName: 'Windows 2000', year: '2000', color: '#0b3b6f' },
+        'winxp': { version: 'winxp', displayName: 'Windows XP', year: '2001', color: '#5a9fd4' },
+        'win7': { version: 'windows7', displayName: 'Windows 7', year: '2009', color: '#4e9fe6' },
+        'win8': { version: 'windows8', displayName: 'Windows 8', year: '2012', color: '#1ba1e2' }, 
+        'win10': { version: 'windows10', displayName: 'Windows 10', year: '2015', color: '#0078d4' },
+        'win11': { version: 'windows11', displayName: 'Windows 11', year: '2021', color: '#0067c4' }
       };
       
       this.themes.forEach(t=>{
         const btn = document.createElement('div');
-        const osVersion = osMap[t] || t;
-        btn.textContent = `${t} ${osVersion !== t ? `(${osVersion})` : ''}`;
+        const osInfo = osMap[t] || { version: t, displayName: t, year: '????', color: '#808080' };
+        
+        btn.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 12px; height: 12px; border-radius: 2px; background: ${osInfo.color}; border: 1px solid #000;"></div>
+            <div>
+              <div style="font-weight: bold; font-size: 11px;">${osInfo.displayName}</div>
+              <div style="font-size: 9px; color: #666;">${osInfo.year}</div>
+            </div>
+          </div>
+        `;
+        
         btn.style.padding = '6px';
         btn.style.cursor = 'pointer';
         btn.style.borderTop = '1px solid rgba(0,0,0,0.1)';
+        btn.style.transition = 'background-color 0.2s';
+        btn.onmouseover = () => {
+          btn.style.backgroundColor = '#f0f0f0';
+        };
+        btn.onmouseout = () => {
+          btn.style.backgroundColor = 'transparent';
+        };
+        
         btn.onclick = async ()=>{
           try{
-            console.log('TestMenu: Switching to OS version:', osVersion);
+            console.log('TestMenu: Switching to OS version:', osInfo.version);
             
             // Use OSManager upgrade system for proper OS switching
             if(window.OSManager && window.OSManager.upgrade) {
-              await OSManager.upgrade(osVersion);
+              await OSManager.upgrade(osInfo.version);
             } else {
               // Fallback to theme switching only
               const link = document.getElementById('theme-stylesheet');
@@ -54,7 +72,7 @@
                 }
               }
               if(window.UIManager) {
-                UIManager.renderDesktop({version: osVersion, ui: {theme: t}});
+                UIManager.renderDesktop({version: osInfo.version, ui: {theme: t}});
               }
             }
             

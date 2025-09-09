@@ -1,0 +1,10 @@
+{
+  "apps": ["explorer", "notepad", "email"],
+  "ui": { "theme": "windows98" },
+  "features": {
+    "active_desktop": true,
+    "windows_update": false,
+    "plug_and_play": true,
+    "multiple_monitors": true
+  }
+}

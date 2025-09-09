@@ -37,6 +37,26 @@
   transform: scale(1.05);
 }
 
+#desktop-root.theme-win11 .taskbar {
+  justify-content: center;
+  padding: 0 20px;
+}
+
+#desktop-root.theme-win11 .taskbar .start-button {
+  order: 1;
+}
+
+#desktop-root.theme-win11 .taskbar .task-area {
+  order: 2;
+  flex: none;
+  margin: 0 10px;
+}
+
+#desktop-root.theme-win11 .taskbar .system-tray {
+  order: 3;
+  margin-left: auto;
+}
+
 #desktop-root.theme-win11 .start-button::before {
   content: '';
   display: block;
