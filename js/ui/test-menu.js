@@ -55,21 +55,38 @@
         
         btn.onclick = async ()=>{
           try{
-            console.log('TestMenu: Switching to theme:', t, 'OS version:', osInfo.version);
+            console.log('TestMenu: FIXED VERSION - Switching to theme:', t, 'OS version:', osInfo.version);
             
-            // Update theme stylesheet first
+            // Add visual feedback that the new code is running
+            btn.style.backgroundColor = '#90EE90';
+            btn.innerHTML = 'Switching...';
+            setTimeout(() => {
+              btn.style.backgroundColor = 'transparent';
+              btn.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 12px; height: 12px; border-radius: 2px; background: ${osInfo.color}; border: 1px solid #000;"></div>
+                  <div>
+                    <div style="font-weight: bold; font-size: 11px;">${osInfo.displayName}</div>
+                    <div style="font-size: 9px; color: #666;">${osInfo.year}</div>
+                  </div>
+                </div>
+              `;
+            }, 500);
+            
+            // Update theme stylesheet first with cache busting
             const link = document.getElementById('theme-stylesheet');
             if(link) {
               const newHref = `css/themes/${t}.css?cb=${Date.now()}`;
-              console.log('Loading CSS:', newHref);
+              console.log('TestMenu: Loading CSS:', newHref);
               link.href = newHref;
             }
             
-            // Always use UIManager for proper theme switching
+            // Force immediate theme switching - don't use OSManager
+            console.log('TestMenu: Calling UIManager.renderDesktop directly');
             if(window.UIManager && window.UIManager.renderDesktop) {
               // Wait a moment for CSS to load
               setTimeout(() => {
-                console.log('Rendering desktop with theme:', t, 'version:', osInfo.version);
+                console.log('TestMenu: Rendering desktop with theme:', t, 'version:', osInfo.version);
                 
                 // Render desktop with proper theme - use the CSS theme name directly
                 window.UIManager.renderDesktop({
@@ -77,18 +94,23 @@
                   ui: { theme: t }
                 });
                 
-                console.log(`Theme switching complete: ${t} for OS: ${osInfo.version}`);
-              }, 100);
+                console.log(`TestMenu: Theme switching complete: ${t} for OS: ${osInfo.version}`);
+              }, 150);
             } else {
-              console.warn('UIManager not available, using basic fallback');
-              // Basic fallback - just update the root class
+              console.warn('TestMenu: UIManager not available, using direct DOM manipulation');
+              // Direct DOM manipulation fallback
               const root = document.getElementById('desktop-root');
               if (root) {
                 // Remove all existing theme classes
-                Array.from(root.classList).filter(c => c.startsWith('theme-')).forEach(c => root.classList.remove(c));
+                Array.from(root.classList).filter(c => c.startsWith('theme-')).forEach(c => {
+                  console.log('TestMenu: Removing class:', c);
+                  root.classList.remove(c);
+                });
                 // Add new theme class
-                root.classList.add('theme-' + t);
-                console.log('Applied theme class:', 'theme-' + t);
+                const newClass = 'theme-' + t;
+                root.classList.add(newClass);
+                console.log('TestMenu: Applied theme class:', newClass);
+                console.log('TestMenu: Root classes now:', root.className);
               }
             }
             
@@ -106,4 +128,53 @@
     }
   };
   global.TestMenu = TestMenu;
+  
+  // FORCE OVERRIDE - Replace any cached onclick handlers on load
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('TestMenu: DOM loaded, forcing theme switch override');
+    setTimeout(() => {
+      const testMenu = global.TestMenu;
+      if (testMenu && testMenu.themes) {
+        console.log('TestMenu: Overriding theme switching to bypass OSManager completely');
+        // Force immediate theme switching without OSManager
+        window.FORCE_THEME_SWITCH = function(themeName, displayName) {
+          console.log('FORCE_THEME_SWITCH: Switching to', themeName, displayName);
+          
+          // Update CSS immediately
+          const link = document.getElementById('theme-stylesheet');
+          if(link) {
+            link.href = `css/themes/${themeName}.css?cb=${Date.now()}`;
+            console.log('FORCE_THEME_SWITCH: Updated CSS to', link.href);
+          }
+          
+          // Update DOM classes immediately
+          const root = document.getElementById('desktop-root');
+          if (root) {
+            // Remove all theme classes
+            Array.from(root.classList).filter(c => c.startsWith('theme-')).forEach(c => {
+              console.log('FORCE_THEME_SWITCH: Removing', c);
+              root.classList.remove(c);
+            });
+            
+            // Add new theme class
+            const newClass = 'theme-' + themeName;
+            root.classList.add(newClass);
+            console.log('FORCE_THEME_SWITCH: Added', newClass);
+            console.log('FORCE_THEME_SWITCH: Root classes now:', root.className);
+            
+            // Force re-render UI with new theme
+            if(window.UIManager && window.UIManager.renderDesktop) {
+              setTimeout(() => {
+                window.UIManager.renderDesktop({
+                  version: displayName.toLowerCase().replace(' ', ''),
+                  ui: { theme: themeName }
+                });
+                console.log('FORCE_THEME_SWITCH: Re-rendered desktop');
+              }, 100);
+            }
+          }
+        };
+      }
+    }, 1000);
+  });
 })(window);

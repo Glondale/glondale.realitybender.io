@@ -1,0 +1,12 @@
+{
+  "apps": ["explorer", "notepad", "email", "cmd", "wordpad", "paint"],
+  "ui": { "theme": "winxp" },
+  "features": {
+    "luna_theme": true,
+    "cleartype": true,
+    "remote_desktop": true,
+    "system_restore": true,
+    "fast_user_switching": true,
+    "windows_firewall": true
+  }
+}

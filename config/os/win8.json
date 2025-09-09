@@ -1,0 +1,27 @@
+{
+  "apps": ["explorer", "notepad", "email", "search", "powershell", "store"],
+  "ui": { "theme": "win8" },
+  "features": {
+    "metro_interface": true,
+    "touch_interface": true,
+    "cloud_sync": true,
+    "app_store": true,
+    "tablet_mode": true
+  },
+  "unlocks": {
+    "drives": ["D:\\", "E:\\"],
+    "compatibility_layer": true,
+    "temporal_cache": "limited",
+    "future_apps": "glitched"
+  },
+  "glitches": {
+    "haptic_feedback": "accidental_activation",
+    "ui_confusion": "metro_future_conflict",
+    "cloud_temporal": "data_conflicts"
+  },
+  "restrictions": {
+    "quantum_keys": true,
+    "full_ai_access": true,
+    "timeline_browsing": true
+  }
+}

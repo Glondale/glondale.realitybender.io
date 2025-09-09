@@ -32,9 +32,9 @@
   <script src="js/core/plugin-manager.js"></script>
 
   <!-- UI and apps (must load before engine start so plugins register) -->
-  <script src="js/ui/desktop-shell.js"></script>
-  <script src="js/ui/start-menu.js"></script>
-  <script src="js/ui/test-menu.js"></script>
+  <script src="js/ui/desktop-shell.js?v=3&t=1733751600"></script>
+  <script src="js/ui/start-menu.js?v=3&t=1733751600"></script>
+  <script src="js/ui/test-menu.js?v=3&t=1733751600"></script>
 
   <script src="js/apps/base-app.js"></script>
   <script src="js/apps/explorer.js"></script>
@@ -48,6 +48,28 @@
     } else {
       console.warn('RBOS: GameEngine not available');
     }
+    
+    // Add manual theme switching for testing
+    window.switchTheme = function(themeName) {
+      console.log('Manual theme switch to:', themeName);
+      if (window.FORCE_THEME_SWITCH) {
+        window.FORCE_THEME_SWITCH(themeName, themeName);
+      } else {
+        console.log('FORCE_THEME_SWITCH not available yet, trying direct method');
+        const link = document.getElementById('theme-stylesheet');
+        if(link) {
+          link.href = `css/themes/${themeName}.css?cb=${Date.now()}`;
+        }
+        const root = document.getElementById('desktop-root');
+        if (root) {
+          Array.from(root.classList).filter(c => c.startsWith('theme-')).forEach(c => root.classList.remove(c));
+          root.classList.add('theme-' + themeName);
+          console.log('Applied theme class:', 'theme-' + themeName);
+        }
+      }
+    };
+    
+    console.log('Manual theme switching available. Try: switchTheme("win10"), switchTheme("winxp"), switchTheme("win11"), etc.');
   </script>
 </body>
 </html>
