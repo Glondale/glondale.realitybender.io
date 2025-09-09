@@ -83,16 +83,22 @@
             
             // Force immediate theme switching - don't use OSManager
             console.log('TestMenu: Calling UIManager.renderDesktop directly');
-            if(window.UIManager && window.UIManager.renderDesktop) {
+        if(window.UIManager && UIManager.renderDesktop) {
               // Wait a moment for CSS to load
               setTimeout(() => {
                 console.log('TestMenu: Rendering desktop with theme:', t, 'version:', osInfo.version);
                 
                 // Render desktop with proper theme - use the CSS theme name directly
-                window.UIManager.renderDesktop({
-                  version: osInfo.version, 
-                  ui: { theme: t }
-                });
+            var currentEnv = (window.OSManager && OSManager.env) ? OSManager.env : {};
+            // merge env but prefer existing values for most keys; only override ui.theme and version when needed
+            var mergedEnv = Object.assign({}, currentEnv, {
+              version: currentEnv.version || t,
+              ui: Object.assign({}, currentEnv.ui || {}, { theme: t })
+            });
+            // preserve apps list if present
+            if(currentEnv.apps && !mergedEnv.apps) mergedEnv.apps = currentEnv.apps;
+            // allow stylesheet to start loading before re-render so background images apply
+            setTimeout(function(){ UIManager.renderDesktop(mergedEnv); }, 80);
                 
                 console.log(`TestMenu: Theme switching complete: ${t} for OS: ${osInfo.version}`);
               }, 150);
@@ -165,11 +171,18 @@
             // Force re-render UI with new theme
             if(window.UIManager && window.UIManager.renderDesktop) {
               setTimeout(() => {
-                window.UIManager.renderDesktop({
-                  version: displayName.toLowerCase().replace(' ', ''),
-                  ui: { theme: themeName }
-                });
-                console.log('FORCE_THEME_SWITCH: Re-rendered desktop');
+                try {
+                  var currentEnv = (window.OSManager && OSManager.env) ? OSManager.env : {};
+                  var mergedEnv = Object.assign({}, currentEnv, {
+                    version: currentEnv.version || displayName.toLowerCase().replace(' ', ''),
+                    ui: Object.assign({}, currentEnv.ui || {}, { theme: themeName })
+                  });
+                  if(currentEnv.apps && !mergedEnv.apps) mergedEnv.apps = currentEnv.apps;
+                  UIManager.renderDesktop(mergedEnv);
+                  console.log('FORCE_THEME_SWITCH: Re-rendered desktop with merged env');
+                } catch (e) {
+                  console.error('FORCE_THEME_SWITCH: render failed', e);
+                }
               }, 100);
             }
           }
