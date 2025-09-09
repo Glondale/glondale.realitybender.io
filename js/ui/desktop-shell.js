@@ -10,13 +10,25 @@
       this.env = env || {};
       // apply theme class to desktop-root based on env.ui.theme or env.version
       const theme = (env && env.ui && env.ui.theme) ? env.ui.theme : (env && env.version ? env.version : 'windows95');
-      // remove previous theme classes
-      root.className = '';
-      root.classList.add('theme-' + theme);
       
-      // Debug logging
-      console.log('UIManager: Applied theme class:', 'theme-' + theme, 'to root element');
-      console.log('UIManager: Root element classes:', root.className);
+      // Debug logging before changes
+      console.log('UIManager: renderDesktop called with env:', env);
+      console.log('UIManager: Determined theme:', theme);
+      console.log('UIManager: Current root classes before change:', root.className);
+      
+      // remove previous theme classes
+      Array.from(root.classList).filter(c => c.startsWith('theme-')).forEach(c => {
+        console.log('UIManager: Removing class:', c);
+        root.classList.remove(c);
+      });
+      
+      // Add new theme class
+      const newThemeClass = 'theme-' + theme;
+      root.classList.add(newThemeClass);
+      
+      // Debug logging after changes
+      console.log('UIManager: Added theme class:', newThemeClass);
+      console.log('UIManager: Final root element classes:', root.className);
       // background is via CSS theme
       // create a sample desktop icon using the W95 icon asset
   const icon = document.createElement('div');

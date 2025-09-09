@@ -2,11 +2,18 @@
 /* Retro teal background and classic palette */
 #desktop-root .desktop-area, .desktop-area.theme-windows95, #desktop-root .desktop-area.theme-windows95 {
 	/* Windows 95 with wallpaper fallback */
-	background-image: url("../../Assets/Wallpapers/W95-98.webp");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-color: #008080;
+	background-image: url("../../Assets/Wallpapers/W95-98.webp") !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+	background-size: cover !important;
+	background-color: #008080 !important;
+}
+
+#desktop-root.theme-windows95 .taskbar {
+  background: #c0c0c0 !important;
+  border-top: 2px solid #808080 !important;
+  height: 36px !important;
+  box-shadow: inset 0 1px 0 #fff !important;
 }
 
 .taskbar .start-button::before {

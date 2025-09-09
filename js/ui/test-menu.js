@@ -55,42 +55,40 @@
         
         btn.onclick = async ()=>{
           try{
-            console.log('TestMenu: Switching to OS version:', osInfo.version);
+            console.log('TestMenu: Switching to theme:', t, 'OS version:', osInfo.version);
             
-            // Always use UIManager for proper theme switching to ensure consistency
+            // Update theme stylesheet first
+            const link = document.getElementById('theme-stylesheet');
+            if(link) {
+              const newHref = `css/themes/${t}.css?cb=${Date.now()}`;
+              console.log('Loading CSS:', newHref);
+              link.href = newHref;
+            }
+            
+            // Always use UIManager for proper theme switching
             if(window.UIManager && window.UIManager.renderDesktop) {
-              // Create proper environment object with theme mapping
-              const themeMapping = {
-                'windows95': 'windows95',
-                'windows98': 'windows98', 
-                'win2000': 'win2000',
-                'winxp': 'winxp',
-                'win7': 'win7',
-                'win8': 'win8', 
-                'win10': 'win10',
-                'win11': 'win11'
-              };
-              const themeToUse = themeMapping[t] || t;
-              
-              // Update theme stylesheet
-              const link = document.getElementById('theme-stylesheet');
-              if(link) {
-                link.href = `css/themes/${t}.css?cb=${Date.now()}`;
-              }
-              
-              // Render desktop with proper theme
-              window.UIManager.renderDesktop({
-                version: osInfo.version, 
-                ui: { theme: themeToUse }
-              });
-              
-              console.log(`Applied theme: ${themeToUse} for OS: ${osInfo.version}`);
+              // Wait a moment for CSS to load
+              setTimeout(() => {
+                console.log('Rendering desktop with theme:', t, 'version:', osInfo.version);
+                
+                // Render desktop with proper theme - use the CSS theme name directly
+                window.UIManager.renderDesktop({
+                  version: osInfo.version, 
+                  ui: { theme: t }
+                });
+                
+                console.log(`Theme switching complete: ${t} for OS: ${osInfo.version}`);
+              }, 100);
             } else {
-              console.warn('UIManager not available, using fallback');
-              // Fallback approach
-              const link = document.getElementById('theme-stylesheet');
-              if(link) {
-                link.href = `css/themes/${t}.css?cb=${Date.now()}`;
+              console.warn('UIManager not available, using basic fallback');
+              // Basic fallback - just update the root class
+              const root = document.getElementById('desktop-root');
+              if (root) {
+                // Remove all existing theme classes
+                Array.from(root.classList).filter(c => c.startsWith('theme-')).forEach(c => root.classList.remove(c));
+                // Add new theme class
+                root.classList.add('theme-' + t);
+                console.log('Applied theme class:', 'theme-' + t);
               }
             }
             
