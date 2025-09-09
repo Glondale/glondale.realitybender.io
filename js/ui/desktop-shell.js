@@ -50,6 +50,39 @@
       root.appendChild(tb);
       // expose for OSManager
       global.UIManager = UIManager;
+      // add debug overlay showing plugin registry
+      try{
+        const dbg = document.createElement('div');
+        dbg.className = 'rbos-debug-overlay';
+        dbg.style.position = 'fixed';
+        dbg.style.right = '8px';
+        dbg.style.top = '8px';
+        dbg.style.background = 'rgba(0,0,0,0.6)';
+        dbg.style.color = 'white';
+        dbg.style.padding = '6px';
+        dbg.style.fontSize = '12px';
+        dbg.style.zIndex = 9999;
+        dbg.style.borderRadius = '4px';
+        dbg.innerHTML = `<div style="font-weight:bold;margin-bottom:4px;">RBOS Debug</div><div id="rbos-debug-plugins">plugins: (loading)</div><div style="margin-top:6px;"><button id="rbos-debug-refresh">Refresh</button> <button id="rbos-debug-open-ex">Open Explorer</button> <button id="rbos-debug-open-em">Open Email</button></div>`;
+        document.body.appendChild(dbg);
+        const update = ()=>{
+          const el = document.getElementById('rbos-debug-plugins');
+          if(!el) return;
+          try{
+            if(window.PluginManager && typeof window.PluginManager.list === 'function'){
+              el.textContent = 'plugins: ' + window.PluginManager.list().join(', ');
+            } else if(window.PluginManager) {
+              el.textContent = 'plugins: ' + Object.keys(window.PluginManager).join(', ');
+            } else {
+              el.textContent = 'plugins: none';
+            }
+          }catch(e){ el.textContent='plugins: error'; }
+        };
+        document.getElementById('rbos-debug-refresh').onclick = update;
+        document.getElementById('rbos-debug-open-ex').onclick = ()=>{ try{ const inst = window.PluginManager && window.PluginManager.create('explorer'); if(inst && inst.open) inst.open(); }catch(e){ console.error(e); } };
+        document.getElementById('rbos-debug-open-em').onclick = ()=>{ try{ const inst = window.PluginManager && window.PluginManager.create('email'); if(inst && inst.open) inst.open(); }catch(e){ console.error(e); } };
+        setTimeout(update, 500);
+      }catch(e){}
     },
     
     createTaskbar(taskbar, theme, env){

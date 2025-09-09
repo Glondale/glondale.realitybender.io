@@ -606,10 +606,16 @@
           
           if (item.app) {
             try {
+              console.log('StartMenu: opening app', item.app);
               const inst = window.PluginManager && window.PluginManager.create(item.app);
-              if (inst && inst.open) inst.open();
-            } catch (e) {
-              console.log('App not available:', item.app);
+              if(!inst){ console.warn('StartMenu: plugin instance not returned for', item.app); return; }
+              if(typeof inst.open !== 'function'){
+                console.warn('StartMenu: plugin instance has no open() for', item.app, inst);
+                return;
+              }
+              inst.open();
+            } catch(err){
+              console.error('StartMenu: error opening app', item.app, err);
             }
           }
           this.toggle();
@@ -714,17 +720,23 @@
         tile.onmouseout = () => tile.style.transform = 'scale(1)';
         
         // Click handler
-        tile.onclick = () => {
-          if (item.app) {
-            try {
-              const inst = window.PluginManager && window.PluginManager.create(item.app);
-              if (inst && inst.open) inst.open();
-            } catch (e) {
-              console.log('App not available:', item.app);
+          tile.onclick = () => {
+            if (item.app) {
+              try {
+                console.log('StartMenu tile: opening app', tile.app);
+                const inst = window.PluginManager && window.PluginManager.create(tile.app);
+                if(!inst){ console.warn('StartMenu tile: plugin instance not returned for', tile.app); return; }
+                if(typeof inst.open !== 'function'){
+                  console.warn('StartMenu tile: plugin instance has no open() for', tile.app, inst);
+                  return;
+                }
+                inst.open();
+              } catch(err){
+                console.error('StartMenu tile: error opening app', tile.app, err);
+              }
             }
-          }
-          this.toggle();
-        };
+            this.toggle();
+          };
         
         grid.appendChild(tile);
       });
