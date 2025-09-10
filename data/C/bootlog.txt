@@ -1,0 +1,8 @@
+[BOOTLOG]
+1998-09-14 07:32:10 INIT: Boot sequence start
+1998-09-14 07:32:11 DETECT: CPU=Pentium II 350MHz
+1998-09-14 07:32:11 DETECT: RAM=64MB OK
+1998-09-14 07:32:12 DRIVER: Loaded display vga.dll
+1998-09-14 07:32:12 DRIVER: Loaded sound sb16.vxd
+1998-09-14 07:32:13 SHELL: Explorer initialized
+1998-09-14 07:32:14 COMPLETE: System ready

@@ -1,4 +1,0 @@
-{
-  "apps": ["explorer", "notepad", "email"],
-  "ui": { "theme": "windows95" }
-}

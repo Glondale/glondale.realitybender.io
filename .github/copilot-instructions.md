@@ -1,66 +1,64 @@
 <!--
-Reality-Bending OS (RBOS) - repository guidance for automated coding agents
+Reality-Bending OS (RBOS) — concise guidance for AI coding agents
 
-Keep this short, focused and actionable. Do not add general coding advice — focus on
-the concrete patterns and files used in this repo so an AI agent can make safe edits.
+This file focuses on concrete, repo-specific patterns and must be kept short. Avoid general advice.
 -->
 
-# RBOS — Copilot instructions
+# RBOS — Copilot instructions (updated)
 
-Purpose: Help an AI coding agent become productive quickly in this small browser-run OS prototype.
+ Quick context
+ - Single-page browser OS prototype. Primary runtime pieces you need now: `computer.js` (container), `js/core/app-loader.js` (dynamic app discovery), OS layer at `js/operating-system/os-win98.js`, and apps under `js/Apps/`.
 
-Key locations
-- `index.html` — app entry, script load order matters: core (`js/core/*.js`) → UI (`js/ui/*.js`) → apps (`js/apps/*.js`) → GameEngine.start()
-- `js/core/` — core runtime (EventSystem, GameEngine, OSManager, contentLoader, FileSystem, WindowManager, PluginManager).
-- `js/ui/` — UI shell and menus. `UIManager.renderDesktop(env)` is the central DOM renderer.
-- `js/apps/` — individual app modules. Apps must register with `PluginManager.register(id, factory)`.
-- `css/core/base.css` and `css/themes/*` — theming is applied by swapping `<link id="theme-stylesheet">` and adding `theme-<name>` classes on `#desktop-root`.
+Key files to read first
+- `computer.js` — global Computer singleton, event bus, boot lifecycle, tick loop. Available as `window.computer` in the browser.
+ - `js/operating-system/os-win98.js` — current Windows98 OS implementation (desktop, Start menu, Explorer stub, Task Manager). Exposes `window.win98Env` after load and defines `loadWindows98()`.
+- `js/core/app-loader.js` — imports all app modules found under `/js/Apps/` on page load (discovery relies on server directory listing). This makes app modules execute and register installers.
+- `js/Apps/*` — app modules should export an installer (default) and auto-register via `window.__W98_APPS__` or execute installer on import.
+- `index.html` — script order matters: app-loader should run before the OS loader so apps can register themselves before OS initialization.
 
-Architecture overview (big picture)
-- Single-page app. The engine loads an OS JSON from `config/os/<version>.json` via `contentLoader.loadOSVersion()` then calls `OSManager.initialize(env)`.
-- `OSManager` emits `os:initialized`. `UIManager.renderDesktop(env)` constructs two DOM regions: `.desktop-area` (wallpaper + icons) and `.taskbar` (fixed bottom). Theme classes are applied to `#desktop-root`.
-- Plugin pattern: `PluginManager` stores factories under ids. UI and apps call `PluginManager.create(id)` to obtain instances. Some apps register factories (functions returning new instances), others register constructors/classes — `PluginManager.create` attempts both.
-- Window model: `WindowManager.createWindow(title, html, opts)` builds draggable windows attached to `#desktop-root`.
-- Virtual data layer: `FileSystem` fetches virtual files from `data/virtual-files/*` and reads OS-specific unlocks from `config/os/*.json`.
+How apps are discovered & registered (important)
+- App discovery is dynamic: `app-loader.js` scrapes `/js/Apps/` (recursively) and imports discovered `.js` modules every page load — this is in-memory only.
+- App modules should push an installer function to the global installer queue: `window.__W98_APPS__ = window.__W98_APPS__ || []; window.__W98_APPS__.push(installFn);`
+- When `loadWindows98()` runs it calls queued installers with the running env (the OS also auto-installs queued apps if loaded after apps).
+- Example pattern (look at `js/Apps/W98/notepad.js`): export default installer and auto-queue on import.
 
-Important conventions and gotchas
-- Script load order is critical. Never move app script tags before `js/core/plugin-manager.js` and `js/core/window-manager.js` in `index.html`.
-- `UIManager.renderDesktop(env)` may replace DOM nodes; avoid relying on element identity across renders. Prefer listening to `EventSystem` events (e.g., `os:initialized`, `engine:ready`).
-- Plugins must be registered on the global `window.PluginManager`. Use `window.PluginManager.register('id', ()=> new MyApp())` or `window.PluginManager.register('id', MyConstructor)` consistently.
-- When changing themes, update both the stylesheet href (`#theme-stylesheet`) and add/remove `theme-<name>` class on `#desktop-root` to keep CSS selectors consistent.
-- File paths: virtual filesystem maps Windows-style paths to `data/virtual-files/<drive-folder>/...`. Use `FileSystem.readFile('C:/path')` and friends.
+Runtime globals and debug checks
+- `window.computer` — Computer singleton (boot, events). Useful events: `system:boot:complete`, `system:tick`.
+- `window.win98Env` — Win98 environment after OS loads (exposes methods like `addStartMenuItem`, `launch`, `_spawnProcess` — internals prefixed with `_` but used by apps now).
+- `window.__RBOS_APPS_LOADED__` — list of imported app module paths produced by the loader.
 
-Dev/debug workflows (quick commands and tips)
-- Run a static server from repo root to serve assets (from dev container):
-  - python3 -m http.server 8000
-  Then open `http://localhost:8000` in the browser.
-- Use browser DevTools console to inspect runtime globals (helpful checks):
-  - `window.PluginManager.list()` — lists registered plugin ids
-  - `window.OSManager.env` — current OS env
-  - `window.UIManager.renderDesktop` — callable function
-  - `window.GameEngine.start()` — restart/trigger boot
-- If an app doesn't open: check console logs for messages from `PluginManager.create()` and Start Menu handlers. We added verbose logging to `js/core/plugin-manager.js` and `js/ui/start-menu.js`.
+Dev & test workflow (exact commands)
+- Serve from repo root (dev):
+  ```bash
+  python3 -m http.server 8000
+  ```
+  Then open `http://localhost:8000`.
+- Open DevTools console and verify:
+  - `window.computer` exists
+  - `window.__RBOS_APPS_LOADED__` lists modules the loader imported
+  - `window.win98Env` after `system:boot:complete` (or call `loadWindows98()` manually)
 
-Patterns for safe edits
-- Prefer non-destructive theme changes: update `#theme-stylesheet.href` with a cache-busting `?cb=...` param and call `UIManager.renderDesktop(env)` with merged env to avoid wiping runtime state.
-- When adding or editing apps in `js/apps/`, ensure they register with `PluginManager` and expose an `.open()` method on instances. Tests and smoke-tests in `js/core/game-engine.js` try to create `explorer` and `email` at boot.
-- When updating core modules, run a fast smoke test: open the page and verify console logs include:
-  - `GameEngine: starting, osVersion=`
-  - `Plugin registered <id>` for expected apps
-  - `PluginManager.create requested id=` when opening apps
+Conventions and gotchas
+- Script load order: app-loader must run before the OS loader in `index.html` if apps should auto-register prior to OS initialization.
+- Server requirement: dynamic discovery depends on HTML directory listings (works with `python3 -m http.server`). If deploying where listings are disabled, add a manifest or run a build-time generator.
+ - Folder name: `js/operating-system/` is the preferred folder name to avoid spaces in import paths; update imports to the new path when moving files.
+- App API: installers receive the env. Currently apps may call env internals (e.g., `_spawnProcess`, `_attachProcessWindow`) — treat these as stable for now but avoid changing their names without updating apps.
 
-Files to read first
-- `js/core/plugin-manager.js` — registration & create fallback (factory vs constructor)
-- `js/ui/desktop-shell.js` — how desktop and taskbar are laid out and where Start Menu/Test Menu hooks plug in
-- `js/ui/start-menu.js` — mapping of menu item `app` ids used across the UI
-- `js/apps/` small apps (notepad.js, explorer.js, email.js) — examples of how apps are written and how they interact with FileSystem and WindowManager
+Quick examples
+- Add a new app at `js/Apps/W98/example.js`:
+  ```js
+  export default function installExample(env) {
+    env.addStartMenuItem(['Programs','Accessories'], { id: 'example', title: 'Example', target: 'example.exe' });
+    // implement launch handling via env.launch patching or by relying on env to call registered handlers
+  }
+  // auto-register
+  window.__W98_APPS__ = window.__W98_APPS__ || [];
+  window.__W98_APPS__.push(installExample);
+  if (window.win98Env) installExample(window.win98Env);
+  ```
 
-Non-obvious decisions
-- Some apps register classes (e.g., `file-explorer.js` registers a class) while many register factories (`()=> new App()`). `PluginManager.create()` supports both, but prefer factory registration for simpler semantics.
-- The debug overlay and smoke-tests were intentionally added to help automated agents validate plugin presence. Use them when making changes.
+When to ask for help / edit core
+- If you change the OS loader (`loadWindows98`) or the installer queue behavior, update `index.html` and `app-loader.js` accordingly and run a local smoke test (serve and confirm `window.__RBOS_APPS_LOADED__` and Start menu entries).
+- If you modify window management (title-bar, z-order, drag handlers), test with multiple apps open and verify Taskbar buttons sync.
 
-When in doubt
-- Run the app locally and check the debug overlay (top-right) for `plugins:` list and use the overlay buttons to try opening Explorer/Email.
-- If editing `UIManager.renderDesktop`, ensure you don't delete global references like `window.PluginManager` or `window.UIManager`.
-
-If you want, I can also add small unit-style smoke scripts under `tools/` that run quick DOM-less checks (e.g., verifying all `app` ids in `start-menu.js` have a registration). Ask and I'll add them.
+If anything here looks incomplete or outdated for the tasks you want automated agents to do, tell me which area to expand (app model, FS integration, build-time manifest generation, or folder rename) and I will iterate.

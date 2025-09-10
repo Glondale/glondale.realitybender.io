@@ -1,1 +1,0 @@
-Reality-Bending OS Prototype\n\nWelcome.\n\nThis is a prototype file used to test the virtual filesystem.\n\nYou found a computer that seems older than it should be. Dig through the folders and the email client to find more clues.\n\n- Dr. S.\n

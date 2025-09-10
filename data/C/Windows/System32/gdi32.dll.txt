@@ -1,0 +1,1 @@
+(binary placeholder) GDI32 - Graphics Device Interface
