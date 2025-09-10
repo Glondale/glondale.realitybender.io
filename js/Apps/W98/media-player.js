@@ -255,26 +255,27 @@ function startVisualizer(state) {
 function injectStyles() {
   if (document.getElementById('wmp64-styles')) return;
   const css = `
-  .wmp64-root { font:11px 'MS Sans Serif'; display:flex; flex-direction:column; background:#d4d0c8; color:#000; min-width:340px; }
-  .wmp64-menubar { background:#d4d0c8; padding:2px 4px; border-bottom:1px solid #808080; display:flex; gap:12px; }
+  /* Scoped to windows created by the OS */
+  .win98-window .wmp64-root { font:11px 'MS Sans Serif'; display:flex; flex-direction:column; background:transparent; color:#000; min-width:340px; }
+  .win98-window .wmp64-menubar { padding:2px 4px; border-bottom:1px solid #808080; display:flex; gap:12px; }
   .wmp64-menubar span { cursor:default; }
-  .wmp64-display { background:#000; margin:4px; margin-bottom:2px; padding:4px; border:2px inset #808080; position:relative; }
-  .wmp64-title { position:absolute; top:4px; left:8px; font-weight:bold; font-size:10px; color:#0f0; text-shadow:0 0 3px #060; }
-  .wmp64-vis { display:block; width:100%; height:100px; background:#000; }
-  .wmp64-controls-bar { display:flex; align-items:center; gap:8px; padding:4px; padding-top:0; }
-  .wmp64-transport .tb { width:28px; height:22px; font:10px 'MS Sans Serif'; background:#c0c0c0; border:2px solid #fff; box-shadow:inset -1px -1px #000, inset 1px 1px #808080; cursor:pointer; }
+  .win98-window .wmp64-display { background:#000; margin:4px; margin-bottom:2px; padding:4px; border:2px inset #808080; position:relative; }
+  .win98-window .wmp64-title { position:absolute; top:4px; left:8px; font-weight:bold; font-size:10px; color:#0f0; text-shadow:0 0 3px #060; }
+  .win98-window .wmp64-vis { display:block; width:100%; height:100px; background:#000; }
+  .win98-window .wmp64-controls-bar { display:flex; align-items:center; gap:8px; padding:4px; padding-top:0; }
+  .win98-window .wmp64-transport .tb { width:28px; height:22px; font:10px 'MS Sans Serif'; background:#c0c0c0; border:2px solid #fff; box-shadow:inset -1px -1px #000, inset 1px 1px #808080; cursor:pointer; }
   .wmp64-transport .tb:active { box-shadow:inset 1px 1px #000, inset -1px -1px #808080; }
-  .wmp64-seek-wrap { flex:1; display:flex; flex-direction:column; gap:2px; }
+  .win98-window .wmp64-seek-wrap { flex:1; display:flex; flex-direction:column; gap:2px; }
   .wmp64-seek { width:100%; }
   .wmp64-time { font:10px monospace; text-align:right; }
-  .wmp64-vol-wrap { display:flex; align-items:center; }
-  .wmp64-vol { width:80px; }
-  .wmp64-pl-toggle { font:10px 'MS Sans Serif'; background:#c0c0c0; border:2px solid #fff; box-shadow:inset -1px -1px #000, inset 1px 1px #808080; cursor:pointer; height:22px; }
-  .wmp64-playlist-panel { margin:0 4px 4px; border:2px inset #808080; background:#fff; max-height:140px; overflow:auto; padding:4px; }
+  .win98-window .wmp64-vol-wrap { display:flex; align-items:center; }
+  .win98-window .wmp64-vol { width:80px; }
+  .win98-window .wmp64-pl-toggle { font:10px 'MS Sans Serif'; background:#c0c0c0; border:2px solid #fff; box-shadow:inset -1px -1px #000, inset 1px 1px #808080; cursor:pointer; height:22px; }
+  .win98-window .wmp64-playlist-panel { margin:0 4px 4px; border:2px inset #808080; background:#fff; max-height:140px; overflow:auto; padding:4px; }
   .wmp64-pl-header { font-weight:bold; margin-bottom:4px; }
-  .wmp64-track { padding:2px 4px; cursor:pointer; font-size:11px; }
-  .wmp64-track.active, .wmp64-track:hover { background:#000080; color:#fff; }
-  .wmp64-status { border-top:1px solid #808080; padding:2px 6px; font-size:10px; font-style:italic; background:#d4d0c8; }
+  .win98-window .wmp64-track { padding:2px 4px; cursor:pointer; font-size:11px; }
+  .win98-window .wmp64-track.active, .win98-window .wmp64-track:hover { background:#000080; color:#fff; }
+  .win98-window .wmp64-status { border-top:1px solid #808080; padding:2px 6px; font-size:10px; font-style:italic; }
   `;
   const style = document.createElement('style');
   style.id = 'wmp64-styles';

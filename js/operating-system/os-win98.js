@@ -32,6 +32,8 @@ class Win98Environment {
 
 	load(container = document.body) {
 		if (this.loaded) return;
+		// Ensure the external 98.css theme is present (injected by this OS module)
+		ensure98Css();
 		this._buildDOM(container);
 		this._seedDefaults();
 		this._startPerfSampler();
@@ -44,7 +46,7 @@ class Win98Environment {
 		root.innerHTML = `
 			<div class="win98-desktop" id="win98-desktop"></div>
 			<div class="win98-taskbar" id="win98-taskbar">
-				<button class="win98-start-btn" id="win98-start-btn">Start</button>
+				<button class="win98-start-btn default" id="win98-start-btn">Start</button>
 				<div class="win98-task-buttons" id="win98-task-buttons"></div>
 				<div class="win98-tray" id="win98-tray">12:00</div>
 			</div>
@@ -133,9 +135,12 @@ class Win98Environment {
 
 	renderStartMenu() {
 		if (!this.startMenuEl) return;
+		// Use a sunken-panel wrapper and a role-based menu per 98.css recommendations
 		const html = [
-			'<div class="win98-start-menu-inner">',
-			this._renderMenuLevel(this.startMenu.programs),
+			'<div class="sunken-panel win98-start-menu-inner">',
+			'<menu role="tablist">',
+			this._renderMenuLevelAsTabs(this.startMenu.programs),
+			'</menu>',
 			'</div>'
 		].join('');
 		this.startMenuEl.innerHTML = html;
@@ -149,6 +154,7 @@ class Win98Environment {
 	}
 
 	_renderMenuLevel(items) {
+		// kept for backward compatibility
 		return `<ul class="menu-level">${items.map(item => {
 			if (item.type === 'folder') {
 				return `<li class="folder">${item.name}${this._renderMenuLevel(item.children)}</li>`;
@@ -156,6 +162,20 @@ class Win98Environment {
 				return `<li class="item" data-target="${item.target}">${item.title}</li>`;
 			}
 		}).join('')}</ul>`;
+	}
+
+	_renderMenuLevelAsTabs(items) {
+		// Render top-level entries as tab-like items per 98.css examples (menu > li[role=tab])
+		return items.map(item => {
+			if (item.type === 'folder') {
+				return item.children.map(child => {
+					if (child.type === 'folder') return `<li role="tab">${child.name}</li>`;
+					return `<li role="tab" data-target="${child.target}">${child.title}</li>`;
+				}).join('');
+			} else {
+				return `<li role="tab" data-target="${item.target}">${item.title}</li>`;
+			}
+		}).join('');
 	}
 
 	launch(target, options = {}) {
@@ -188,11 +208,13 @@ class Win98Environment {
 		const proc = this.processes.get(pid);
 		if (!proc) return;
 		const win = document.createElement('div');
-		win.className = 'win98-window';
+		// Keep legacy class while adding 98.css `.window` for compatibility
+		win.className = 'window win98-window';
+		win.setAttribute('role','dialog');
 		win.innerHTML = `
 			<div class="title-bar">
-				<span class="title">${proc.title}</span>
-				<div class="controls"><button data-act="close">X</button></div>
+				<div class="title-bar-text"><span class="title">${proc.title}</span></div>
+				<div class="title-bar-controls controls"><button aria-label="Close" data-act="close"></button></div>
 			</div>
 			<div class="window-body">${contentHTML}</div>
 		`;
@@ -279,11 +301,108 @@ class Win98Environment {
 		const pid = this._spawnProcess({ id: 'explorer', title: 'Explorer' });
 		const html = `
 			<div class="explorer-pane">
-				<div class="sidebar">(Drives placeholder)</div>
-				<div class="content">(File list placeholder \u2014 future dynamic FS mount)</div>
+				<div class="sidebar field-border" data-role="drives">(Drives)</div>
+				<div class="content sunken-panel" data-role="content">(Loading...)</div>
 			</div>`;
 		this._attachProcessWindow(pid, html);
+
+			// after attach, hydrate
+			setTimeout(async () => {
+				const win = this._findWindowByPid(pid);
+				if (!win) return;
+				const drivesEl = win.querySelector('[data-role="drives"]');
+				const contentEl = win.querySelector('[data-role="content"]');
+
+				// Map drives to data folders (mirror repo data/)
+				const drives = [ { name: 'C:', path: 'data/C/' }, { name: 'D:', path: 'data/D/' }, { name: 'FUTURE', path: 'data/FUTURE/' } ];
+				drivesEl.innerHTML = drives.map(d => `<div class="drive" data-path="${d.path}">${d.name}</div>`).join('');
+
+				// click handler for drives
+				drivesEl.querySelectorAll('.drive').forEach(el => {
+					el.addEventListener('click', async () => {
+						// highlight
+						drivesEl.querySelectorAll('.drive').forEach(d => d.classList.toggle('active', d===el));
+						const path = el.getAttribute('data-path');
+						await renderDir(path);
+					});
+				});
+
+				// render initial drive (C:)
+				await renderDir(drives[0].path);
+
+				async function renderDir(path) {
+					contentEl.innerHTML = `<div class="explorer-header">${path}</div><div class="explorer-list">Loading...</div>`;
+					const listEl = contentEl.querySelector('.explorer-list');
+					try {
+						const entries = await (this && this._fetchDir ? this._fetchDir(path) : window.fetch(path).then(r=>r.text()));
+						// if _fetchDir returned a list, use it; otherwise show raw
+						if (Array.isArray(entries)) {
+							if (entries.length === 0) listEl.textContent = '(empty)';
+							else listEl.innerHTML = entries.map((e,i) => `<div class="explorer-entry" data-path="${path}${e.name}" data-isdir="${e.isDir}">${e.isDir? '📁':'📄'} ${e.name}</div>`).join('');
+							// attach click / dblclick
+							listEl.querySelectorAll('.explorer-entry').forEach(el => {
+								el.addEventListener('dblclick', async (ev) => {
+									const isDir = el.getAttribute('data-isdir') === 'true';
+									const p = el.getAttribute('data-path');
+									if (isDir) {
+										await renderDir(p + (p.endsWith('/')? '':'/'));
+									} else {
+										// open files: if .txt, load into notepad
+										if (/\.txt$/.test(p)) {
+											try {
+												const content = await (this && this._fetchFile ? this._fetchFile(p) : window.fetch(p).then(r=>r.text()));
+												if (this && this.launch) this.launch('notepad.exe', { content, title: p.split('/').pop() });
+											} catch (err) { listEl.textContent = 'Failed to open file'; }
+										} else {
+											// for unknown files, attempt to download or show info
+											window.open(p, '_blank');
+										}
+									}
+								});
+							});
+						} else {
+							listEl.textContent = 'Unable to parse directory listing';
+						}
+					} catch (err) {
+						listEl.textContent = 'Error reading directory';
+					}
+				}
+				// bind correct this for inner functions
+				renderDir = renderDir.bind(this);
+			}, 30);
 	}
+
+		// fetch directory listing and return array [{name,isDir}]
+		async _fetchDir(path) {
+			try {
+				const resp = await fetch(path);
+				const txt = await resp.text();
+				const tmp = document.createElement('div');
+				tmp.innerHTML = txt;
+				const links = Array.from(tmp.querySelectorAll('a'));
+				// filter out parent link and map
+				const items = links.map(a => {
+					const href = a.getAttribute('href');
+					const name = decodeURIComponent(href.split('/').filter(Boolean).pop());
+					const isDir = href.endsWith('/');
+					return { name, href, isDir };
+				}).filter(it => it.name && it.name !== '..');
+				return items;
+			} catch (err) {
+				console.error('fetchDir error', err);
+				return [];
+			}
+		}
+
+		async _fetchFile(path) {
+			try {
+				const resp = await fetch(path);
+				return await resp.text();
+			} catch (err) {
+				console.error('fetchFile error', err);
+				throw err;
+			}
+		}
 
 	_openTaskManager() {
 		const pid = this._spawnProcess({ id: 'taskmgr', title: 'Task Manager' });
@@ -318,7 +437,8 @@ class Win98Environment {
 		}));
 
 		const renderTasks = () => {
-			tasksPanel.innerHTML = `<table class="task-table"><tr><th>PID</th><th>Title</th><th>Status</th><th>Action</th></tr>${Array.from(this.processes.values()).map(p => `<tr><td>${p.pid}</td><td>${p.title}</td><td>${p.status}</td><td><button data-kill="${p.pid}">End</button></td></tr>`).join('')}</table>`;
+			// Wrap table in sunken-panel and use `interactive` table class per 98.css TableView guidance
+			tasksPanel.innerHTML = `<div class="sunken-panel" style="max-height:220px; overflow:auto;"><table class="interactive"><thead><tr><th>PID</th><th>Title</th><th>Status</th><th>Action</th></tr></thead><tbody>${Array.from(this.processes.values()).map(p => `<tr><td>${p.pid}</td><td>${p.title}</td><td>${p.status}</td><td><button data-kill="${p.pid}">End</button></td></tr>`).join('')}</tbody></table></div>`;
 			tasksPanel.querySelectorAll('[data-kill]').forEach(btn => {
 				btn.addEventListener('click', (e) => {
 					e.preventDefault();
@@ -387,43 +507,60 @@ class Win98Environment {
 	}
 }
 
-// Minimal CSS injection to emulate Windows 98 vibe (placeholder; to be refined for authenticity)
-(function injectStyles(){
-	if (document.getElementById('win98-styles')) return;
+// Load the main 98.css theme dynamically so this module controls its own theme.
+function ensure98Css() {
+	if (typeof document === 'undefined') return;
+	if (document.getElementById('cdn-98css')) return;
+	// Prefer local node_modules copy when available. Try dist/98.css then style.css, else fall back to CDN.
+	const candidates = [
+		'/node_modules/98.css/dist/98.css',
+		'/node_modules/98.css/style.css',
+		'https://jdan.github.io/98.css/98.css'
+	];
+	const tryInject = (href) => {
+		const link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.href = href;
+		link.id = 'cdn-98css';
+		link.crossOrigin = 'anonymous';
+		document.head.appendChild(link);
+	};
+	// Probe local files using fetch; if reachable, inject, otherwise try next candidate.
+	(async () => {
+		for (const href of candidates) {
+			if (href.startsWith('http')) { tryInject(href); break; }
+			try {
+				const r = await fetch(href, { method: 'HEAD' });
+				if (r.ok) { tryInject(href); break; }
+			} catch (e) {
+				// ignore and try next
+			}
+		}
+	})();
+}
+
+// Minimal compatibility shim: rely on external 98.css for core styles, keep a tiny override for our custom classes.
+(function injectWin98CompatStyles(){
+	if (document.getElementById('win98-compat')) return;
 	const css = `
-	.win98-root { position:relative; width:100vw; height:100vh; background:#008080 url('') center/cover; overflow:hidden; font-family: 'MS Sans Serif', Tahoma, sans-serif; }
+	/* Compatibility overrides to work with https://jdan.github.io/98.css/98.css */
+	.win98-root { width:100vw; height:100vh; overflow:hidden; font-family: 'MS Sans Serif', Tahoma, Arial, sans-serif; background-color:#008080; background-image: url('Assets/Wallpapers/W95-98.webp'); background-position:center; background-repeat:no-repeat; background-size:auto; }
 	.win98-desktop { position:absolute; inset:0; padding:8px; display:flex; flex-wrap:wrap; align-content:flex-start; gap:12px; }
-	.win98-shortcut { width:64px; text-align:center; color:#fff; font-size:11px; cursor:default; }
-	.win98-shortcut .icon { width:32px; height:32px; margin:0 auto 4px; background:linear-gradient(#c0c0c0,#808080); border:1px solid #000; }
-	.win98-taskbar { position:absolute; left:0; right:0; bottom:0; height:32px; background:#c0c0c0; border-top:2px solid #fff; display:flex; align-items:center; gap:4px; padding:2px 4px; box-shadow:inset 0 1px #808080; }
-	.win98-start-btn { font:11px 'MS Sans Serif'; background:#c0c0c0; border:2px solid #fff; box-shadow:inset -1px -1px #000, inset 1px 1px #808080; cursor:pointer; }
-	.win98-task-buttons { flex:1; display:flex; gap:4px; }
-	.task-btn { font:11px 'MS Sans Serif'; padding:2px 6px; background:#c0c0c0; border:2px solid #fff; box-shadow:inset -1px -1px #000, inset 1px 1px #808080; }
-	.task-btn.active { outline:1px dashed #000; }
-	.win98-tray { font:11px monospace; padding:2px 6px; background:#c0c0c0; border:2px solid #fff; box-shadow:inset -1px -1px #000, inset 1px 1px #808080; }
-	.win98-window { position:absolute; top:80px; left:120px; width:360px; background:#c0c0c0; border:2px solid #fff; box-shadow:inset -2px -2px #000, inset 2px 2px #808080; }
-	.win98-window .title-bar { background:linear-gradient(90deg,#000080,#1084d0); color:#fff; padding:2px 4px; display:flex; justify-content:space-between; align-items:center; font:11px 'MS Sans Serif'; }
-	.win98-window .title-bar .controls button { font:11px 'MS Sans Serif'; }
-	.win98-window .window-body { background:#c0c0c0; padding:6px; font:11px 'MS Sans Serif'; min-height:120px; }
-	.win98-start-menu { position:absolute; left:0; bottom:32px; width:220px; background:#c0c0c0; border:2px solid #fff; box-shadow:inset -2px -2px #000, inset 2px 2px #808080; font:11px 'MS Sans Serif'; }
-	.win98-start-menu-inner { max-height:300px; overflow:auto; }
-	.win98-start-menu ul { list-style:none; margin:4px; padding:0; }
-	.win98-start-menu li { margin:2px 0; }
-	.win98-start-menu li.item { cursor:pointer; padding:2px 4px; }
-	.win98-start-menu li.item:hover { background:#000080; color:#fff; }
-	.win98-start-menu li.folder > ul { margin-left:12px; }
+	.win98-shortcut { width:72px; text-align:center; color:#000; font-size:12px; cursor:default; }
+	.win98-shortcut .icon { width:32px; height:32px; margin:0 auto 4px; background:linear-gradient(#ffffff,#c0c0c0); border:1px solid #000; box-shadow: 1px 1px 0 #808080; }
+	.win98-taskbar { position:absolute; left:0; right:0; bottom:0; height:36px; display:flex; align-items:center; gap:6px; padding:4px; }
+	.win98-window { position:absolute; background:#c0c0c0; border:2px solid #fff; box-shadow: 2px 2px 0 #808080, -1px -1px 0 #fff; }
+	.win98-window .title-bar { height:20px; padding:2px 6px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; }
+	.win98-window .window-body { padding:8px; min-height:120px; }
+	.win98-start-menu { position:absolute; left:6px; bottom:42px; width:220px; }
 	.explorer-pane { display:flex; gap:8px; }
-	.explorer-pane .sidebar { width:120px; background:#fff; padding:4px; border:1px solid #000; }
-	.explorer-pane .content { flex:1; background:#fff; padding:4px; border:1px solid #000; }
-	.taskmgr .tabs { display:flex; gap:4px; margin-bottom:4px; }
-	.taskmgr .tabs button { font:11px 'MS Sans Serif'; }
-	.taskmgr .panel { background:#fff; border:1px solid #000; padding:4px; }
-	.taskmgr table { width:100%; border-collapse:collapse; font:11px 'MS Sans Serif'; }
-	.taskmgr th, .taskmgr td { border:1px solid #808080; padding:2px 4px; text-align:left; }
-	.perf-canvas { display:block; background:#000; margin-top:4px; border:1px solid #808080; }
+	/* keep task button text from wrapping */
+	.task-btn { white-space:nowrap; }
+	/* small utility tweaks for embedded canvases / perf widget */
+	.perf-canvas { display:block; background:#000; margin-top:6px; border:2px inset #808080; }
 	`;
 	const style = document.createElement('style');
-	style.id = 'win98-styles';
+	style.id = 'win98-compat';
 	style.textContent = css;
 	document.head.appendChild(style);
 })();

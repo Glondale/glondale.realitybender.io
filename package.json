@@ -1,0 +1,15 @@
+{
+  "name": "glondale.realitybender.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "computer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "98.css": "^0.1.21"
+  }
+}
